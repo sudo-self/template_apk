@@ -1,0 +1,50 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Environment and build
+.env
+*.env
+dist/
+build/
+.tmp/
+.cache/
+.DS_Store
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android
+*.apk
+*.keystore
+*.jks
+*.aab
+*.iml
+local.properties
+captures/
+outputs/
+.idea/
+
+# Python / temp files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.tmp
+*.log
+
+# Bubblewrap artifacts
+twa-manifest.json.backup
+output/
+generated/
+manifest-checksum.txt
+
+# OS / Editor
+Thumbs.db
+.vscode/
+*.swp
