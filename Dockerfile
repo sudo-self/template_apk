@@ -1,47 +1,50 @@
-# Use Node 20 (Debian Slim variant)
+# Use Node.js base image (includes npm and Debian package manager)
 FROM node:20-slim
 
-# Install dependencies: Java (for Android tools), Python3, and unzip
+# Set working directory for the app
+WORKDIR /app
+
+# 1. Install dependencies required for Android / Bubblewrap builds
+# - openjdk-17-jdk: needed by Gradle
+# - python3: required by Bubblewrap
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         openjdk-17-jdk \
         python3 \
-        default-jre-headless \
         unzip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Bubblewrap globally
+# 2. Install Bubblewrap globally
 RUN npm install -g bubblewrap
 
-# Set working directory
-WORKDIR /app
-
-# Copy project files
+# 3. Copy Node.js server logic and UI
 COPY server.js .
 COPY index.html .
-COPY .gitignore .
+
+# 4. Copy all necessary Android / TWA template files
 COPY android.keystore .
-COPY app/ ./app/
+COPY app ./app/
 COPY build.gradle .
-COPY gradle/ ./gradle/
+COPY gradle ./gradle/
 COPY gradle.properties .
 COPY gradlew .
 COPY gradlew.bat .
-COPY icon-192.png .
-COPY icon-512.png .
-COPY manifest-checksum.txt .
 COPY settings.gradle .
 COPY store_icon.png .
 COPY twa-manifest.json .
+COPY manifest-checksum.txt .
+COPY icon-192.png .
+COPY icon-512.png .
 
-# Ensure Gradle wrapper is executable
+# 5. Ensure Gradle wrapper is executable
 RUN chmod +x gradlew
 
-# Expose port for server.js
+# 6. Expose Cloud Run default port
 ENV PORT=8080
 EXPOSE 8080
 
-# Default command to start the Node.js server
+# 7. Start Node.js server
 CMD ["node", "server.js"]
+
 
