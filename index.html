@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Run TWA Builder</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for aesthetic appeal and font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fafc;
+        }
+        .card {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        /* Custom button styling for gradient effect */
+        .btn-primary {
+            background-image: linear-gradient(to right, #4c51bf, #6b46c1); /* Indigo to Violet */
+            transition: background-image 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #6b46c1, #4c51bf); /* Reversed hover effect */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="card w-full max-w-lg bg-white p-8 rounded-xl">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-6 text-center">TWA Cloud Builder</h1>
+        <p class="text-gray-600 mb-8 text-center">
+            Configure your Trusted Web Activity. The server will run <code>bubblewrap build</code> and provide the APK download.
+        </p>
+
+        <form id="buildForm" class="space-y-6">
+            <div>
+                <label for="host" class="block text-sm font-medium text-gray-700 mb-1">
+                    Start URL / Host
+                </label>
+                <!-- FIX: Changed type="url" to type="text" to prevent overly strict browser validation in the fetch payload -->
+                <input type="text" id="host" name="host" 
+                       placeholder="e.g., https://example.com/"
+                       value="https://www.google.com/"
+                       required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <p class="text-xs text-gray-500 mt-1">Must be the PWA URL (including HTTPS).</p>
+            </div>
+
+            <div>
+                <label for="launcherName" class="block text-sm font-medium text-gray-700 mb-1">
+                    Application Name
+                </label>
+                <!-- Input for the App Name -->
+                <input type="text" id="launcherName" name="launcherName" 
+                       placeholder="e.g., My Awesome App"
+                       value="Gemini TWA"
+                       required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <p class="text-xs text-gray-500 mt-1">This will be the name shown on the user's device.</p>
+            </div>
+
+            <!-- Submit Button with Loading Spinner -->
+            <button type="submit" id="submitBtn" 
+                    class="btn-primary w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg font-bold text-white shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
+                <span id="btnText">Start APK Build & Download</span>
+                <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </form>
+
+        <!-- Message Box for feedback (Success/Error) -->
+        <div id="messageBox" class="mt-4 p-3 rounded-lg text-sm hidden" role="alert"></div>
+    </div>
+
+    <script>
+        document.getElementById('buildForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('spinner');
+            const messageBox = document.getElementById('messageBox');
+            
+            // UI State: Loading
+            submitBtn.disabled = true;
+            btnText.textContent = 'Building... This may take a minute';
+            spinner.classList.remove('hidden');
+            messageBox.classList.add('hidden');
+            messageBox.textContent = '';
+            
+            const host = document.getElementById('host').value;
+            const launcherName = document.getElementById('launcherName').value;
+
+            try {
+                // Send request to Node.js server
+                const response = await fetch('/build-apk', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ host, launcherName })
+                });
+
+                if (response.ok) {
+                    // 1. Trigger download if successful (server streams the APK)
+                    const blob = await response.blob();
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    
+                    let filename = 'app.apk';
+                    // Attempt to read the filename set by the server in the header
+                    if (contentDisposition) {
+                        const match = contentDisposition.match(/filename="(.+)"/);
+                        if (match && match[1]) {
+                            filename = match[1];
+                        }
+                    }
+
+                    // Create a temporary link element to trigger the download
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url); // Clean up the URL object
+
+                    // UI State: Success
+                    messageBox.textContent = 'APK built and download initiated successfully!';
+                    messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-800');
+                    messageBox.classList.add('bg-green-100', 'text-green-800');
+
+                } else {
+                    // Handle server-side errors (e.g., bubblewrap failure)
+                    const errorJson = await response.json();
+                    throw new Error(errorJson.error || 'Unknown server error during build.');
+                }
+
+            } catch (error) {
+                // UI State: Error
+                console.error("Build failed:", error);
+                messageBox.textContent = `Build failed: ${error.message}`;
+                messageBox.classList.remove('hidden', 'bg-green-100', 'text-green-800');
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            } finally {
+                // UI State: Reset
+                submitBtn.disabled = false;
+                btnText.textContent = 'Start APK Build & Download';
+                spinner.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
