@@ -21,18 +21,18 @@ plugins {
 }
 
 def twaManifest = [
-    applicationId: 'app.vercel.make_manifest_json.twa',
-    hostName: 'jessejesse.com', // The domain being opened in the TWA.
+    applicationId: 'com.jessejesse.bucket.twa',
+    hostName: 'example.com', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
-    name: 'jessejesse', // The application name.
-    launcherName: 'Jesse', // The name shown on the Android Launcher.
-    themeColor: '#F0F0F0', // The color used for the status bar.
+    name: 'example', // The application name.
+    launcherName: 'example', // The name shown on the Android Launcher.
+    themeColor: '#FFFFFF', // The color used for the status bar.
     themeColorDark: '#000000', // The color used for the dark status bar.
     navigationColor: '#000000', // The color used for the navigation bar.
     navigationColorDark: '#000000', // The color used for the dark navbar.
     navigationDividerColor: '#000000', // The navbar divider color.
     navigationDividerColorDark: '#000000', // The dark navbar divider color.
-    backgroundColor: '#F0F0F0', // The color used for the splash screen background.
+    backgroundColor: '#FFFFFF', // The color used for the splash screen background.
     enableNotifications: true, // Set to true to enable notification delegation.
     // Every shortcut must include the following fields:
     // - name: String that will show up in the shortcut.
@@ -52,9 +52,9 @@ def twaManifest = [
 
 android {
     compileSdkVersion 36
-    namespace "app.vercel.make_manifest_json.twa"
+    namespace "com.jessejesse.bucket.twa"
     defaultConfig {
-        applicationId "app.vercel.make_manifest_json.twa"
+        applicationId "com.jessejesse.bucket.twa"
         minSdkVersion 21
         targetSdkVersion 35
         versionCode 1
@@ -76,12 +76,12 @@ android {
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
             // the TWA, as it will probably give a better user experience for non-mobile devices.
-            resValue "string", "webManifestUrl", 'https://make-manifest-json.vercel.app/manifest.json'
+            resValue "string", "webManifestUrl", 'https://bucket.jessejesse.com/manifest.json'
         
 
         
             // This is used by Meta Quest.
-            resValue "string", "fullScopeUrl", 'https://make-manifest-json.vercel.app/'
+            resValue "string", "fullScopeUrl", 'https://bucket.jessejesse.com/'
         
 
         
