@@ -24,7 +24,7 @@ def twaManifest = [
     applicationId: 'app.vercel.make_manifest_json.twa',
     hostName: 'jessejesse.com', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
-    name: 'Jesse', // The application name.
+    name: 'jessejesse', // The application name.
     launcherName: 'Jesse', // The name shown on the Android Launcher.
     themeColor: '#F0F0F0', // The color used for the status bar.
     themeColorDark: '#000000', // The color used for the dark status bar.

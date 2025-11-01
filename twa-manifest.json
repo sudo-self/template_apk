@@ -1,7 +1,7 @@
 {
   "packageId": "app.vercel.make_manifest_json.twa",
   "host": "jessejesse.com",
-  "name": "Jesse",
+  "name": "jessejesse",
   "launcherName": "Jesse",
   "display": "standalone",
   "themeColor": "#F0F0F0",
@@ -13,11 +13,11 @@
   "backgroundColor": "#F0F0F0",
   "enableNotifications": true,
   "startUrl": "/",
-  "iconUrl": "https://make-manifest-json.vercel.app/icon512.png",
-  "maskableIconUrl": "https://make-manifest-json.vercel.app/icon512.png",
+  "iconUrl": "https://bimi-svg.netlify.app/icon-512.png",
+  "maskableIconUrl": "https://bimi-svg.netlify.app/icon-512.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
-    "path": "/Users/midnight/apk-cloud/untitled folder/android.keystore",
+    "path": "/Users/midnight/Downloads/template_apk-main-2/android.keystore",
     "alias": "android"
   },
   "appVersionName": "1",
