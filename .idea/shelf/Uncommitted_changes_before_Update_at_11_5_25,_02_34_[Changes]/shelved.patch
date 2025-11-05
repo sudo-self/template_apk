@@ -1,0 +1,61 @@
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>pluginManagement {\n    repositories {\n        google {\n            content {\n                includeGroupByRegex(\"com\\\\.android.*\")\n                includeGroupByRegex(\"com\\\\.google.*\")\n                includeGroupByRegex(\"androidx.*\")\n            }\n        }\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n\nrootProject.name = \"GitHub Action APKs\"\ninclude ':app'\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle b/settings.gradle
+--- a/settings.gradle	(revision 4a71c50e90436e1fd0dae51451cc5c1db519b30d)
++++ b/settings.gradle	(date 1762335186938)
+@@ -1,3 +1,4 @@
++cd
+ pluginManagement {
+     repositories {
+         google {
+Index: app/src/main/java/com/example/githubactionapks/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.githubactionapks\n\nimport android.annotation.SuppressLint\nimport android.os.Bundle\nimport android.webkit.WebView\nimport android.webkit.WebViewClient\nimport androidx.activity.ComponentActivity\nimport androidx.activity.OnBackPressedCallback\n\nclass MainActivity : ComponentActivity() {\n\n    private lateinit var webView: WebView\n\n    @SuppressLint(\"SetJavaScriptEnabled\")\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n\n        webView = WebView(this)\n        setContentView(webView)\n\n        // WebView settings\n        webView.settings.javaScriptEnabled = true\n        webView.settings.domStorageEnabled = true\n        webView.webViewClient = WebViewClient()\n\n        // Load dynamic URL and app name\n        val url = getString(R.string.launch_url)\n        val appName = getString(R.string.app_name)\n        webView.loadUrl(url)\n        title = appName\n\n        // Modern back gesture support\n        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {\n            override fun handleOnBackPressed() {\n                if (webView.canGoBack()) {\n                    webView.goBack()\n                } else {\n                    isEnabled = false\n                    onBackPressedDispatcher.onBackPressed()\n                }\n            }\n        })\n    }\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/githubactionapks/MainActivity.kt b/app/src/main/java/com/example/githubactionapks/MainActivity.kt
+--- a/app/src/main/java/com/example/githubactionapks/MainActivity.kt	(revision 4a71c50e90436e1fd0dae51451cc5c1db519b30d)
++++ b/app/src/main/java/com/example/githubactionapks/MainActivity.kt	(date 1762242889664)
+@@ -18,18 +18,18 @@
+         webView = WebView(this)
+         setContentView(webView)
+ 
+-        // WebView settings
++
+         webView.settings.javaScriptEnabled = true
+         webView.settings.domStorageEnabled = true
+         webView.webViewClient = WebViewClient()
+ 
+-        // Load dynamic URL and app name
++
+         val url = getString(R.string.launch_url)
+         val appName = getString(R.string.app_name)
+         webView.loadUrl(url)
+         title = appName
+ 
+-        // Modern back gesture support
++
+         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+             override fun handleOnBackPressed() {
+                 if (webView.canGoBack()) {
+Index: keystore.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/keystore.properties b/keystore.properties
+new file mode 100644
+--- /dev/null	(date 1762115896899)
++++ b/keystore.properties	(date 1762115896899)
+@@ -0,0 +1,4 @@
++storeFile=my-release-key.jks
++storePassword=YOUR_KEYSTORE_PASSWORD
++keyAlias=YOUR_KEY_ALIAS
++keyPassword=YOUR_KEY_PASSWORD
